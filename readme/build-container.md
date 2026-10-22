@@ -24,11 +24,11 @@ because the container is Linux x86-64).
 - base layer builds; Dinghy host mode runs in it (`run dinghy tests/run_host.sh` -> `dinghy.wav` + PNGs);
 - the image build rejects missing and wrong-hash vendor files.
 
-## NOT verified here
-- The toolchain stage and a real `.fwsc` build: JieLi's servers (`pkgman.jieliapp.com`, `gitee.com`, the Aliyun bucket)
-  were unreachable from this network (geo-block / TLS failure), so `fetch-vendor` could not run. Run it on a network that
-  can reach them, or copy the four files into `docker/vendor/` (see `docker/vendor/README.md`), then `image` and `build`.
-- Never disable certificate checks to get past that; the hashes pin the files.
+## CI result (2026-10-22)
+- On GitHub's runners `fetch-vendor` succeeded (hash-pinned), the full image built, and Dinghy and ORBIT produced `.fwsc` packages.
+- Felucca failed at `gen_aa_font.py` (Pillow had no Raqm); `libraqm0 libfribidi0 libharfbuzz0b` were added and that step passes in the base image.
+- From the author's own network the vendor hosts were geo-blocked, so locally only the base layer and host mode were run.
+- The packages were not flashed from container output.
 
 ## Notes
 - Runs with `--userns=keep-id` and `:Z` volume labels, so Fedora/SELinux works and outputs belong to you.
