@@ -1,0 +1,50 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # Needs nothing from JieLi: builds the base layer of docker/Containerfile and runs Dinghy in host mode
+  # (the app on the PC: WAV + screen PNGs).
+  base-and-host-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build base image
+        run: ./mvave-build.sh image-base
+      - name: Clone Dinghy and run it in host mode
+        run: |
+          ./mvave-build.sh clone dinghy
+          MVAVE_IMAGE=mvave-fw-base ./mvave-build.sh run dinghy sh tests/run_host.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dinghy-host-run
+          path: src/dinghy/build/host/*
+
+  # Full image with JieLi's toolchain, then real .fwsc builds. JieLi's servers (pkgman.jieliapp.com, gitee.com,
+  # Aliyun OSS) are geo-restricted and sometimes unreachable, so a failure here is reported but does not fail the
+  # run. The image is built on the runner only and is NEVER pushed: JieLi's licence forbids redistributing the toolchain.
+  full-build:
+    needs: base-and-host-test
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch hash-pinned vendor files
+        run: ./mvave-build.sh fetch-vendor
+      - name: Build image
+        run: ./mvave-build.sh image
+      - name: Check image
+        run: ./mvave-build.sh check
+      - name: Build firmwares
+        run: |
+          ./mvave-build.sh clone dinghy felucca orbit
+          ./mvave-build.sh build dinghy
+          ./mvave-build.sh build felucca
+          ./mvave-build.sh build orbit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fwsc-packages
+          path: out/**/*.fwsc

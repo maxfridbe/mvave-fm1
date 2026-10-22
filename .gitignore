@@ -1,0 +1,13 @@
+# cloned firmware sources and build output
+src/
+out/
+# JieLi vendor files (licence forbids redistribution); keep only the README
+docker/vendor/*
+!docker/vendor/README.md
+# your own device data: flash dumps contain your songs, sounds and settings
+backups/
+# python envs and firmware binaries
+.venv/
+*.fwsc
+*.bin
+*.fm1app

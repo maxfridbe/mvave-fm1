@@ -1,0 +1,54 @@
+# FM-1 firmware build image: JieLi pi32v2 clang + the three AC79 SDK files + Python/Pillow + gcc.
+# Builds Felucca-family firmwares (Dinghy, Felucca, ORBIT, SLOOP, Optimist, ...) that call ./build.sh.
+# Not for fm1_open (needs the Windows toolchain 2.5.3) or fm1-nes (own toolchain flow).
+#
+#   ./mvave-build.sh fetch-vendor     # download + SHA-256-verify the vendor files into vendor/ (or drop them in by hand)
+#   ./mvave-build.sh image            # podman build --platform linux/amd64
+#
+# The vendor files are COPY'd from vendor/ and verified here, so the image build needs no access to JieLi's servers
+# (they geo-block some networks) and never accepts an unchecked file.
+# JieLi's toolchain licence does not allow redistribution: keep this image local, never push it to a registry.
+FROM debian:bookworm-slim AS base
+
+ARG PILLOW_VERSION=12.2.0
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates xz-utils python3 python3-venv gcc libc6-dev make git \
+ && rm -rf /var/lib/apt/lists/* \
+ && python3 -m venv /opt/venv \
+ && /opt/venv/bin/pip install --no-cache-dir --disable-pip-version-check "Pillow==${PILLOW_VERSION}" fonttools
+
+ENV PATH=/opt/venv/bin:$PATH
+WORKDIR /work
+
+FROM base AS builder
+
+ARG TOOLCHAIN_VERSION=20250324.1
+ARG TOOLCHAIN_SHA256=f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958
+ARG UBOOT_SHA256=4e3b4c220dc96641cb5a723f41e68ce41d5261ae9434bb33fbd7f2c59976ded4
+ARG CFGTOOL_SHA256=276579954f076886a6a7694f65dc71c034a63a2c204b76749065c0ac7b010d1b
+ARG EQCFG_SHA256=41167491bffed4651750719c973d2758adeb9021a5670d02d6a53c85ed80ea7d
+
+COPY vendor/ /tmp/vendor/
+
+RUN set -e; cd /tmp/vendor; \
+    for f in jieli-linux-toolchains-${TOOLCHAIN_VERSION}.tar.xz uboot.boot cfg_tool.bin eq_cfg_hw.bin; do \
+        [ -f "$f" ] || { echo "vendor/$f is missing: run ./mvave-build.sh fetch-vendor (see vendor/README.md)" >&2; exit 1; }; \
+    done; \
+    printf '%s  %s\n' \
+        "${TOOLCHAIN_SHA256}" "jieli-linux-toolchains-${TOOLCHAIN_VERSION}.tar.xz" \
+        "${UBOOT_SHA256}" uboot.boot \
+        "${CFGTOOL_SHA256}" cfg_tool.bin \
+        "${EQCFG_SHA256}" eq_cfg_hw.bin | sha256sum -c -; \
+    tar -xJf "jieli-linux-toolchains-${TOOLCHAIN_VERSION}.tar.xz" -C /opt; \
+    mv /opt/jieli-linux-toolchains-* /opt/jieli; \
+    mkdir -p /opt/ac79/cpu/wl82/tools/cfg; \
+    cp uboot.boot cfg_tool.bin /opt/ac79/cpu/wl82/tools/; \
+    cp eq_cfg_hw.bin /opt/ac79/cpu/wl82/tools/cfg/; \
+    rm -rf /tmp/vendor; \
+    /opt/jieli/pi32v2/bin/clang --version
+
+ENV JIELI_TOOLCHAIN=/opt/jieli \
+    AC79_SDK=/opt/ac79 \
+    HOME=/tmp
+LABEL org.opencontainers.image.description="JieLi pi32v2 toolchain for FM-1 firmware: local use only, do not push"
