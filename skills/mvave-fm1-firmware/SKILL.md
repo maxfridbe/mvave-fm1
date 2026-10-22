@@ -122,7 +122,7 @@ or use https://dspaudio.github.io/orbit/ in Chrome/Edge.
 The installer checks the model and package before writing. Flags: `--port NAME`, `--yes`, `--force`. Exit codes: 0 done, 1 cancelled/error, 2 bad args or package, 3 FM-1 not found, 4 connection lost, 5 timeout, 6 wrong model/identity mismatch/foreign loader.
 Keep USB and power connected through the write and reboot. Afterwards `fm1_install.py --info` should report `FM-1_900`.
 
-ORBIT status: 0.7.1 is software-tested only, **not installed on real hardware** per its own README. 0.7.0 install, version and PING were verified on an FM-1. Power-loss recovery is unverified.
+ORBIT status: its own README says 0.7.1 was software-tested only and 0.7.0's install/version/PING were verified on an FM-1; power-loss recovery is unverified. Independently, one owner installed the 0.7.1 release on a stock-V15 unit with this procedure (identity became `FM-1_900`) and reports the firmware works.
 
 ### 5.4 Recovery and rollback
 - Interrupted write: power-cycling re-enters update mode (3 short LED flashes, black screen). Re-run the installer, it resumes only if it recognizes ORBIT's loader (`ota-FM-1_9XX`).

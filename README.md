@@ -34,17 +34,20 @@ Flashing happens on the host with the installers described in the firmware skill
 
 ## Status: what is and is not verified
 Verified on real hardware (one FM-1, Linux): identity read, full-flash double-read backup via MvaveFM1Unbricker, and an
-ORBIT 0.7.1 install with the unit reporting `FM-1_900` afterwards (screen/audio were not inspected).
-Verified in the container: base image, Dinghy host mode, the vendor hash guard.
+ORBIT 0.7.1 install (upstream release package) with the unit reporting `FM-1_900` afterwards. The owner then tested the installed
+firmware and reports it works (their report; no measurements recorded here).
 CI (GitHub Actions, 2026-10-22, run 39823372989): the full image built with JieLi's toolchain (hash-verified) and **Dinghy, Felucca
 and ORBIT all built without a failing step** (an initial run exposed a missing Pillow text library, libraqm, now in the Containerfile).
 The `fwsc-packages` artifact is 1.35 MB zipped, consistent with three packages, but I could not download it to inspect it. No
 package built here has been flashed.
-**Not verified:** a flash of a container-built package, ORBIT's behaviour on the unit (screen/audio were not inspected),
-rollback from a custom firmware, and the claims taken from other repos' documentation.
+**Not verified:** a flash of a container-built package, rollback from a custom firmware to stock, and the claims taken from other repos' documentation.
 The firmware catalog in the development skill comes from the community hub README; only the platform bases were read in depth.
 
 ## Sources
 `aroum/fm1-custom-fw` (hub), `hugelton/Felucca`, `zvenson/dinghy`, `dspaudio/orbit`, `Quixotic7/MvaveFM1Unbricker`,
 `m-vave/fm1_open`, `Keitark/fm1-nes`, `Quixotic7/RemoteFM1`, `Quixotic7/TransitFM1`, `kagaimiq/jl-uboot-tool`.
-Those projects keep their own licences (mostly GPL-3.0). **This repo's own text has no licence yet (so, by default, all rights reserved): the owner should add one.**
+Those projects keep their own licences (mostly GPL-3.0); nothing from them is copied here, and the scripts download them at use time.
+JieLi's toolchain is not redistributable and is never included or pushed.
+
+## Licence
+MIT, see `LICENSE`: this repo's own text, scripts and workflow.
