@@ -25,10 +25,11 @@ because the container is Linux x86-64).
 - the image build rejects missing and wrong-hash vendor files.
 
 ## CI result (2026-10-22)
-- On GitHub's runners `fetch-vendor` succeeded (hash-pinned), the full image built, and Dinghy and ORBIT produced `.fwsc` packages.
-- Felucca failed at `gen_aa_font.py` (Pillow had no Raqm); `libraqm0 libfribidi0 libharfbuzz0b` were added and that step passes in the base image.
+- On GitHub's runners `fetch-vendor` succeeded (hash-pinned), the full image built, and Dinghy, Felucca and ORBIT all built with no failing step
+  (run 39823372989; artifact `fwsc-packages`, 1.35 MB zipped, not downloaded for inspection).
+- The first run failed Felucca at `gen_aa_font.py` (Pillow had no Raqm); `libraqm0 libfribidi0 libharfbuzz0b` fixed it.
 - From the author's own network the vendor hosts were geo-blocked, so locally only the base layer and host mode were run.
-- The packages were not flashed from container output.
+- The packages were not flashed.
 
 ## Notes
 - Runs with `--userns=keep-id` and `:Z` volume labels, so Fedora/SELinux works and outputs belong to you.

@@ -36,9 +36,10 @@ Flashing happens on the host with the installers described in the firmware skill
 Verified on real hardware (one FM-1, Linux): identity read, full-flash double-read backup via MvaveFM1Unbricker, and an
 ORBIT 0.7.1 install with the unit reporting `FM-1_900` afterwards (screen/audio were not inspected).
 Verified in the container: base image, Dinghy host mode, the vendor hash guard.
-CI (GitHub Actions, run on 2026-10-22): the full image built with JieLi's toolchain (hash-verified) and **Dinghy and ORBIT
-built real `.fwsc` packages** in it. Felucca failed on a missing Pillow text-layout library (libraqm); fixed in the Containerfile and
-checked locally, but its full build has not yet passed in CI. None of those packages has been flashed from this container's output.
+CI (GitHub Actions, 2026-10-22, run 39823372989): the full image built with JieLi's toolchain (hash-verified) and **Dinghy, Felucca
+and ORBIT all built without a failing step** (an initial run exposed a missing Pillow text library, libraqm, now in the Containerfile).
+The `fwsc-packages` artifact is 1.35 MB zipped, consistent with three packages, but I could not download it to inspect it. No
+package built here has been flashed.
 **Not verified:** a flash of a container-built package, ORBIT's behaviour on the unit (screen/audio were not inspected),
 rollback from a custom firmware, and the claims taken from other repos' documentation.
 The firmware catalog in the development skill comes from the community hub README; only the platform bases were read in depth.
