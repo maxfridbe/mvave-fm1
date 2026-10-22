@@ -43,11 +43,33 @@ package built here has been flashed.
 **Not verified:** a flash of a container-built package, rollback from a custom firmware to stock, and the claims taken from other repos' documentation.
 The firmware catalog in the development skill comes from the community hub README; only the platform bases were read in depth.
 
-## Sources
-`aroum/fm1-custom-fw` (hub), `hugelton/Felucca`, `zvenson/dinghy`, `dspaudio/orbit`, `Quixotic7/MvaveFM1Unbricker`,
-`m-vave/fm1_open`, `Keitark/fm1-nes`, `Quixotic7/RemoteFM1`, `Quixotic7/TransitFM1`, `kagaimiq/jl-uboot-tool`.
-Those projects keep their own licences (mostly GPL-3.0); nothing from them is copied here, and the scripts download them at use time.
-JieLi's toolchain is not redistributable and is never included or pushed.
+## Sources and related repos
+Read in depth while writing the skills:
+
+| Repo | What it is | Licence (per its repo) |
+|---|---|---|
+| [aroum/fm1-custom-fw](https://github.com/aroum/fm1-custom-fw) | Community hub: catalog of ~130 firmwares, hardware teardown, SysEx/OTA reverse-engineering notes | see repo |
+| [hugelton/Felucca](https://github.com/hugelton/Felucca) | The hardware layer and platform most community firmwares fork | GPL-3.0 |
+| [zvenson/dinghy](https://github.com/zvenson/dinghy) | Smallest Felucca-based template: a sine synth plus updater, USB rescue, MIDI, audio, host mode | GPL-3.0 |
+| [dspaudio/orbit](https://github.com/dspaudio/orbit) | ORBIT groovebox firmware (the one flashed in the example); web installer at [dspaudio.github.io/orbit](https://dspaudio.github.io/orbit/) | GPL-3.0 |
+| [isod89/sloop-fm1](https://github.com/isod89/sloop-fm1) | SLOOP, the groovebox ORBIT descends from | see repo |
+| [m-vave/fm1_open](https://github.com/m-vave/fm1_open) | M-VAVE's official open firmware and binary SDK (Windows toolchain) | GPLv3 + SDK linking exception |
+| [Keitark/fm1-nes](https://github.com/Keitark/fm1-nes) | Bare-metal example (NES emulator), application-only update flow | Apache-2.0 |
+| [Quixotic7/MvaveFM1Unbricker](https://github.com/Quixotic7/MvaveFM1Unbricker) | Full-flash backup, restore to stock V15, soft-brick recovery over plain USB | see repo |
+| [kagaimiq/jl-uboot-tool](https://github.com/kagaimiq/jl-uboot-tool) | Reads/writes JieLi flash in `WL82 UBOOT1.00` mode (used by the Unbricker) | MIT |
+| [Quixotic7/RemoteFM1](https://github.com/Quixotic7/RemoteFM1) | Turns the FM-1 into a USB panel for firmware running on a computer | see repo |
+| [Quixotic7/TransitFM1](https://github.com/Quixotic7/TransitFM1) | Safe stopover firmware between two custom firmwares | see repo |
+| [w0ts/optimist](https://github.com/w0ts/optimist) | Modular firmware builder; source of the pinned toolchain hashes used in `docker/` | GPL-3.0 |
+
+Pointed to by the skills but not read in depth:
+[AL-255/FM-1-RE](https://github.com/AL-255/FM-1-RE) (protocol and firmware reverse engineering),
+[kurogedelic/FM-1-transporter](https://github.com/kurogedelic/FM-1-transporter) (RP2040 hard-brick recovery),
+[merthsoft/flipper-fm1-recovery](https://github.com/merthsoft/flipper-fm1-recovery) (Flipper Zero recovery),
+[czietz/fm1-firmware-patcher](https://github.com/czietz/fm1-firmware-patcher) and
+[smememe/fm1-macropad-patch](https://github.com/smememe/fm1-macropad-patch) (binary patches of stock V15),
+[kagaimiq/jielie](https://github.com/kagaimiq/jielie) (JieLi chip documentation),
+[r/MVaveFM1](https://www.reddit.com/r/MVaveFM1/) (community), and the other firmwares listed in the hub.
+Check each repo's own licence before reusing its code.
 
 ## Licence
 MIT, see `LICENSE`: this repo's own text, scripts and workflow.
