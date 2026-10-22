@@ -38,12 +38,45 @@ jobs:
         run: ./mvave-build.sh image
       - name: Check image
         run: ./mvave-build.sh check
-      - name: Build firmwares
+      - name: Build dinghy
+        continue-on-error: true
         run: |
-          ./mvave-build.sh clone dinghy felucca orbit
-          ./mvave-build.sh build dinghy
-          ./mvave-build.sh build felucca
-          ./mvave-build.sh build orbit
+          ./mvave-build.sh clone dinghy
+          set +e
+          ./mvave-build.sh build dinghy > "$RUNNER_TEMP/dinghy.log" 2>&1; rc=$?
+          set -e
+          tail -n 60 "$RUNNER_TEMP/dinghy.log"
+          if [ "$rc" -ne 0 ]; then
+            msg=$(tail -n 25 "$RUNNER_TEMP/dinghy.log" | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=build dinghy failed (exit $rc)::$msg"
+          fi
+          exit "$rc"
+      - name: Build felucca
+        continue-on-error: true
+        run: |
+          ./mvave-build.sh clone felucca
+          set +e
+          ./mvave-build.sh build felucca > "$RUNNER_TEMP/felucca.log" 2>&1; rc=$?
+          set -e
+          tail -n 60 "$RUNNER_TEMP/felucca.log"
+          if [ "$rc" -ne 0 ]; then
+            msg=$(tail -n 25 "$RUNNER_TEMP/felucca.log" | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=build felucca failed (exit $rc)::$msg"
+          fi
+          exit "$rc"
+      - name: Build orbit
+        continue-on-error: true
+        run: |
+          ./mvave-build.sh clone orbit
+          set +e
+          ./mvave-build.sh build orbit > "$RUNNER_TEMP/orbit.log" 2>&1; rc=$?
+          set -e
+          tail -n 60 "$RUNNER_TEMP/orbit.log"
+          if [ "$rc" -ne 0 ]; then
+            msg=$(tail -n 25 "$RUNNER_TEMP/orbit.log" | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=build orbit failed (exit $rc)::$msg"
+          fi
+          exit "$rc"
       - uses: actions/upload-artifact@v4
         with:
           name: fwsc-packages
